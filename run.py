@@ -7,7 +7,7 @@ pygame.init()
 
 class MyGameText:
     def __init__(self):
-        print("Inicializando biblioteca...")
+        pass
         
     def create_text(self, msg, size, color, font=None):
 
@@ -23,21 +23,53 @@ mgt = MyGameText()
 
 window = pygame.display.set_mode((WINDOW_HEIGHT, WINDOW_WIDTH))
 
-cursorX = 0
-cursorY = 0
+class Target(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
 
-targetX = randint(10, 1000-45)
-targetY = randint(10, 600)
+        self.targetX = randint(10, 1000-45)
+        self.targetY = randint(10, 600)
+                               
+        self.target = pygame.image.load("Assets/CircleTarget.png").convert_alpha()
+        self.target = pygame.transform.scale(self.target, (64*1.8, 64*1.8))
+        self.targetRect = self.target.get_rect(center = (self.targetX, self.targetY))
+        self.targetMask = pygame.mask.from_surface(self.target)
+    
+    def update(self):
+        self.targetX = randint(10, 1000-45)
+        self.targetY = randint(10, 600)
 
-target = pygame.image.load("Assets/CircleTarget.png").convert_alpha()
-target = pygame.transform.scale(target, (64*1.8, 64*1.8))
+class CrossHair(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        
+        XeY = pygame.mouse.get_pos()
+
+        self.crosshair = pygame.image.load(r"Assets/crosshair.png").convert_alpha()
+        self.crosshair = pygame.transform.scale(self.crosshair, (32//1.3, 32//1.3))
+        self.crosshairRect = self.crosshair.get_rect()
+        self.crosshairRect.center = XeY
+        self.crosshairMask = pygame.mask.from_surface(self.crosshair)
+    
+    def update(self):
+        XeY = pygame.mouse.get_pos()
+        self.crosshairRect.center = XeY
+        
+target = Target()
+crosshair = CrossHair()
+
+target_group = pygame.sprite.Group()
+crosshair_group = pygame.sprite.Group()
+
+target_group.add(target)
+crosshair_group.add(crosshair)
 
 counter = 1000
 speed = 2.5
 
 clock = pygame.time.Clock()
 
-debug = False
+debugMode = False
 
 while counter:
     window.fill(COLORS["gray"])
@@ -48,15 +80,11 @@ while counter:
     XeY = pygame.mouse.get_pos()
     cursorX, cursorY = XeY[0], XeY[1]
 
-    crosshair = pygame.image.load(r"Assets/crosshair.png").convert_alpha()
-    crosshair = pygame.transform.scale(crosshair, (32//1.3, 32//1.3))
-    crosshairRect = crosshair.get_rect(center = (cursorX, cursorY))
+    timer = mgt.create_text(f"Timer:{int(counter)}", 25, (0,0,0))
+    current_FPS = mgt.create_text(f"FPS:{FPS}", 25, (0,175,0))
+    current_speed = mgt.create_text(f"SPEED:{speed}", 25, (0,175,0))
 
-    targetRect = target.get_rect(center = (targetX, targetY))
-
-    timer = mgt.create_text(f"Timer:{counter}", 25, (0,0,0))
-    current_FPS = mgt.create_text(f"FPS:{FPS}", 25, (0,100,0))
-    current_speed = mgt.create_text(f"SPEED:{speed}", 25, (0,100,0))
+    crosshair.update()
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -76,45 +104,48 @@ while counter:
                 FPS = 120
             
             if event.key == K_F3:
-                if debug == True:
-                    debug = False
+                if debugMode == True:
+                    debugMode = False
                 else:
-                    debug = True
-        
-        if event.type == MOUSEBUTTONDOWN:
-            if crosshairRect.colliderect(targetRect):
-                counter += 100
-                targetX = randint(10, 1000-45)
-                targetY = randint(10, 600)
+                    debugMode = True
 
     if FPS >= 120:
         if counter >= 2000:
-            speed = 1.5
+            speed = 1.2
             counter -= speed
         else:
             speed = 0.5
             counter -= speed
     elif FPS >= 60:
         if counter >= 2000:
-            speed = 2
+            speed = 1.7
             counter -= speed
         else:
             speed = 1
             counter -= speed
     else:
         if counter >= 2000:
-            speed = 2.5
+            speed = 2.2
             counter -= speed
         else:
             speed = 1.5
             counter -= speed
 
-    window.blit(target, targetRect)
-    window.blit(crosshair, crosshairRect)
+
+    target_group.draw(window)
+    crosshair_group.draw(window)
     window.blit(timer, (0, 0))
-    if debug == True:
+
+    if debugMode == True:
         window.blit(current_FPS, (875, 10))
         window.blit(current_speed, (865, 35))
     else:
         pass
     pygame.display.flip()
+
+        
+"""if event.type == MOUSEBUTTONDOWN:
+if pygame.sprite.spritecollide(crosshair, target_group, False, pygame.sprite.collide_mask):
+counter += 150
+target.update()
+"""
