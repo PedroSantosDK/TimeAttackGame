@@ -21,7 +21,7 @@ class MyGameText:
 
 mgt = MyGameText()
 
-window = pygame.display.set_mode((WINDOW_HEIGHT, WINDOW_WIDTH))
+window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 class Target(pygame.sprite.Sprite):
     def __init__(self):
@@ -81,7 +81,7 @@ while counter:
     cursorX, cursorY = XeY[0], XeY[1]
 
     timer = mgt.create_text(f"Timer:{int(counter)}", 25, (0,0,0))
-    current_FPS = mgt.create_text(f"FPS:{FPS}", 25, (0,175,0))
+    current_FPS = mgt.create_text(f"FPS:{int(clock.get_fps())}", 25, (0,175,0))
     current_speed = mgt.create_text(f"SPEED:{speed}", 25, (0,175,0))
 
     crosshair.update()
@@ -137,7 +137,7 @@ while counter:
     window.blit(timer, (0, 0))
 
     if debugMode == True:
-        window.blit(current_FPS, (875, 10))
+        window.blit(current_FPS, (870, 10))
         window.blit(current_speed, (865, 35))
     else:
         pass
