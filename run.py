@@ -21,7 +21,7 @@ class MyGameText:
 
 mgt = MyGameText()
 
-window = pygame.display.set_mode((WINDOW_HEIGHT, WINDOW_WIDTH))
+window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 cursorX = 0
 cursorY = 0
@@ -55,7 +55,7 @@ while counter:
     targetRect = target.get_rect(center = (targetX, targetY))
 
     timer = mgt.create_text(f"Timer:{counter}", 25, (0,0,0))
-    current_FPS = mgt.create_text(f"FPS:{FPS}", 25, (0,100,0))
+    current_FPS = mgt.create_text(f"FPS:{int(clock.get_fps())}", 25, (0,100,0))
     current_speed = mgt.create_text(f"SPEED:{speed}", 25, (0,100,0))
 
     for event in pygame.event.get():
@@ -112,9 +112,11 @@ while counter:
     window.blit(target, targetRect)
     window.blit(crosshair, crosshairRect)
     window.blit(timer, (0, 0))
+
     if debug == True:
-        window.blit(current_FPS, (875, 10))
+        window.blit(current_FPS, (870, 10))
         window.blit(current_speed, (865, 35))
     else:
         pass
+    
     pygame.display.flip()
