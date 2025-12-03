@@ -89,6 +89,9 @@ while counter:
     current_speed = mgt.create_text(f"SPEED:{speed}", 25, (0,175,0))
 
     crosshair.update()
+    timer = mgt.create_text(f"Timer:{counter}", 25, (0,0,0))
+    current_FPS = mgt.create_text(f"FPS:{int(clock.get_fps())}", 25, (0,100,0))
+    current_speed = mgt.create_text(f"SPEED:{speed}", 25, (0,100,0))
 
     for event in pygame.event.get():
         if event.type == QUIT:
