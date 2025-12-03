@@ -31,7 +31,7 @@ class Target(pygame.sprite.Sprite):
         self.imageY = randint(10, 600)
                                
         self.image = pygame.image.load("Assets/CircleTarget.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (64*1.8, 64*1.8))
+        self.image = pygame.transform.scale(self.image, (64*2, 64*2))
         self.rect = self.image.get_rect(center = (self.imageX, self.imageY))
         self.mask = pygame.mask.from_surface(self.image)
     
@@ -46,7 +46,7 @@ class CrossHair(pygame.sprite.Sprite):
         XeY = pygame.mouse.get_pos()
 
         self.image = pygame.image.load(r"Assets/crosshair.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (32//1.3, 32//1.3))
+        self.image = pygame.transform.scale(self.image, (32//0.8, 32//0.8))
         self.rect = self.image.get_rect()
         self.rect.center = XeY
         self.mask = pygame.mask.from_surface(self.image)
@@ -81,17 +81,11 @@ while counter:
     pygame.mouse.set_visible(False)
     delta_time = clock.tick(FPS) / 1000
 
-    XeY = pygame.mouse.get_pos()
-    cursorX, cursorY = XeY[0], XeY[1]
-
     timer = mgt.create_text(f"Timer:{int(counter)}", 25, (0,0,0))
     current_FPS = mgt.create_text(f"FPS:{int(clock.get_fps())}", 25, (0,175,0))
     current_speed = mgt.create_text(f"SPEED:{speed}", 25, (0,175,0))
 
     crosshair.update()
-    timer = mgt.create_text(f"Timer:{counter}", 25, (0,0,0))
-    current_FPS = mgt.create_text(f"FPS:{int(clock.get_fps())}", 25, (0,100,0))
-    current_speed = mgt.create_text(f"SPEED:{speed}", 25, (0,100,0))
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -99,7 +93,7 @@ while counter:
             sys.exit()
         
         if event.type == MOUSEBUTTONDOWN:
-            if pygame.sprite.spritecollide(crosshair, target_group, False, pygame.sprite.collide_mask):
+            if pygame.sprite.spritecollide(crosshair, target_group, False, pygame.sprite.collide_mask): # type: ignore
                 counter += 150
                 target.update()
 
